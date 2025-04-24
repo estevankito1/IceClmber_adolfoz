@@ -1,55 +1,44 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem.XInput;
 
 public class player_movement : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    SpriteRenderer spriteRenderer;
+    InputController inputs;
+    Rigidbody2D rb;
+    [SerializeField] float speed;
+    [SerializeField] float jumpForce;
 
-    private Vector2 movement;
+    [SerializeField] LayerMask groundedRCLayerMask;
 
-    private Vector2 screenBounds;
-    private float playerHalfWidth;
-    private float xPosLastFrame;
-
-    private void Start()
+    private void Awake()
     {
-        screenBounds = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
-        playerHalfWidth = spriteRenderer.bounds.extents.x;
-        print(playerHalfWidth);
+        rb = GetComponent<Rigidbody2D>();
+        inputs = GetComponent<InputController>();
     }
 
-
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        HandleMovment();
-        ClampMovement();
-        FlipCharacterX();
+        inputs.OnJumpEvent += HandleOnJump;
     }
-    private void FlipCharacterX()
+
+    private void OnDisable()
     {
-        float input = Input.GetAxis("Horizontal");
-        if (input > 0 && (transform.position.x > xPosLastFrame)) {
-            spriteRenderer.flipX = false;
+        inputs.OnJumpEvent += HandleOnJump;
+    }
+
+    private void FixedUpdate()
+    {
+        rb.linearVelocityX = inputs.moveDir * speed;
+    }
+
+    private void HandleOnJump(object sender, EventArgs e) 
+    {
+        //Origin, direction, distance, collision filter.
+        if(Physics2D.Raycast(transform.position, Vector2.down, 1.05f, groundedRCLayerMask))
+        {
+            rb.linearVelocityY = jumpForce;
         }
-        else if (input > 0 && (transform.position.x < xPosLastFrame)){
-            spriteRenderer.flipX = true;
-        }
-
-        xPosLastFrame = transform.position.x;
-    }
-    private void ClampMovement()
-    {
-        float clampedX = Mathf.Clamp(transform.position.x, -screenBounds.x + playerHalfWidth, screenBounds.x - playerHalfWidth);
-        Vector2 pos = transform.position;
-        pos.x = clampedX;
-        transform.position = pos;
-    }
-
-    private void HandleMovment()
-    {
-        float input = Input.GetAxis("Horizontal");
-        movement.x = input * speed * Time.deltaTime;
-        transform.Translate(movement);
     }
 }
