@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem.XInput;
 
-public class player_movement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
     InputController inputs;
@@ -12,6 +12,7 @@ public class player_movement : MonoBehaviour
 
     [SerializeField] LayerMask groundedRCLayerMask;
 
+    public bool grounded {  get; private set; }
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
