@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
     InputController inputs;
+    AttackControler attackControler;
     Rigidbody2D rb;
     [SerializeField] float speed;
     [SerializeField] float jumpForce;
@@ -17,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         inputs = GetComponent<InputController>();
+        attackControler = GetComponent<AttackControler>();
     }
 
     private void OnEnable()
@@ -31,6 +33,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        grounded = Physics2D.Raycast(transform.position, Vector2.down, 1.05f, groundedRCLayerMask);
+        if (attackControler.isAttacking) {
+            rb.linearVelocityX = 0;
+            return;
+        }
         rb.linearVelocityX = inputs.moveDir * speed;
     }
 
