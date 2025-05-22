@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         //Origin, direction, distance, collision filter.
         if(Physics2D.Raycast(transform.position, Vector2.down, 1.05f, groundedRCLayerMask))
         {
-            rb.linearVelocityY = jumpForce;
+           if(grounded && !attackControler.isAttacking) rb.linearVelocityY = jumpForce;
         }
     }
 }
