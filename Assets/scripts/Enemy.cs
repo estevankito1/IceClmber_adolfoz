@@ -21,8 +21,22 @@ public class Enemy : MonoBehaviour
     private void FixedUpdate()
     {
         rb.linearVelocityX=moveDir * speed;
-        RaycastHit2D hit = Physics2D.Raycast(raycastorigin.position, Vector2.down, 0.7f, raycastMask);
-        if (hit.transform != null) return;
+        RaycastHit2D hit = Physics2D.Raycast(raycastorigin.position, Vector2.down, 1f, raycastMask);
+        if (hit.transform == null)
+        {
+            FlipEnemy();
+            return;
+        }
+        if (hit.transform.GetComponent<SpriteRenderer>().enabled) return;
+        if (isBuilder == true) { 
+            isBuilder = false;
+            hit.transform.GetComponent<SpriteRenderer>().enabled = true;
+            hit.transform.GetComponent<Collider2D>().isTrigger = false;
+        }
+        else if (!willbeBuilder) { 
+            willbeBuilder = true;
+        }
+       
         FlipEnemy();
     }
 
@@ -39,6 +53,15 @@ public class Enemy : MonoBehaviour
             return;
         }
         if (!collision.gameObject.CompareTag("Bouncer")) return;
+        if (willbeBuilder == true)
+        {
+            willbeBuilder = false;
+            isBuilder = true;
+        }
+        
+
+
+
         FlipEnemy();
     }
 
@@ -49,6 +72,9 @@ public class Enemy : MonoBehaviour
         Vector3 local = transform.localScale;
         local.x *= -1;
         transform.localScale = local;
+
     }
+
+    
 
 }

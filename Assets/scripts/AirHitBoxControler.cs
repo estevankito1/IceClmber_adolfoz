@@ -12,10 +12,6 @@ public class AirHitBoxControler : MonoBehaviour
         if(rb == null) rb = GetComponentInParent<Rigidbody2D>();
     }
 
-
-
-
-
     private void FixedUpdate() {
         if(playerMovement.grounded) gameObject.SetActive(false);
         if(rb.linearVelocity.y < 0) gameObject.SetActive(false);
@@ -26,8 +22,10 @@ public class AirHitBoxControler : MonoBehaviour
     {
         if(collision.CompareTag("breakable") && !hasBroken)
         {
+            if (!collision.GetComponent<SpriteRenderer>().enabled) return;
             hasBroken = true;
-            collision.gameObject.SetActive(false);
+            collision.GetComponent<SpriteRenderer>().enabled = false;
+            collision.GetComponent<Collider2D>().isTrigger = true;
             rb.linearVelocityY = 0;
         }
     }
