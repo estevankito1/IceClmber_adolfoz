@@ -10,8 +10,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] Transform raycastorigin;
     [SerializeField] LayerMask raycastMask;
 
+    private bool pendingBuilderSwitch = false;
     [SerializeField] bool isBuilder;
     [SerializeField] bool willbeBuilder;
+
+    
+    [SerializeField] Transform spawnPoint;
+    public int health = 100;
+    public GameObject spawner;
+
 
     private void Awake()
     {
@@ -20,7 +27,7 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocityX=moveDir * speed;
+        rb.linearVelocityX = moveDir * speed;
         RaycastHit2D hit = Physics2D.Raycast(raycastorigin.position, Vector2.down, 1f, raycastMask);
         if (hit.transform == null)
         {
@@ -28,15 +35,23 @@ public class Enemy : MonoBehaviour
             return;
         }
         if (hit.transform.GetComponent<SpriteRenderer>().enabled) return;
-        if (isBuilder == true) { 
+        if (isBuilder == true)
+        {
             isBuilder = false;
             hit.transform.GetComponent<SpriteRenderer>().enabled = true;
             hit.transform.GetComponent<Collider2D>().isTrigger = false;
         }
-        else if (!willbeBuilder) { 
+        else if (!willbeBuilder)
+        {
             willbeBuilder = true;
         }
-       
+        if (pendingBuilderSwitch)
+        {
+            willbeBuilder = false;
+            isBuilder = true;
+            pendingBuilderSwitch = false;
+        }
+
         FlipEnemy();
     }
 
@@ -45,11 +60,29 @@ public class Enemy : MonoBehaviour
         rb.linearVelocityX = moveDir * speed;
     }
 
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))  { 
+        pendingBuilderSwitch = true;
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (collision.gameObject.CompareTag("Damage")) // Example: Check for a tag indicating damage
+            {
+                health -= 10; // Example damage
+
+                if (health <= 0)
+                {
+                    // Call the OnEnemyDeath function
+                    GetComponent<EnemySpawner>().OnEnemyDeath();
+                    Destroy(gameObject);
+                }
+            }
             collision.gameObject.SetActive(false);
+            // Nuevo: respawnear enemigo en el punto de spawn si existe
+            if (spawnPoint != null)
+            {
+                transform.position = spawnPoint.position;
+            }
             return;
         }
         if (!collision.gameObject.CompareTag("Bouncer")) return;
@@ -58,13 +91,9 @@ public class Enemy : MonoBehaviour
             willbeBuilder = false;
             isBuilder = true;
         }
-        
-
-
 
         FlipEnemy();
     }
-
 
     void FlipEnemy()
     {
@@ -72,9 +101,14 @@ public class Enemy : MonoBehaviour
         Vector3 local = transform.localScale;
         local.x *= -1;
         transform.localScale = local;
-
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
     }
 
+    
     
 
 }
