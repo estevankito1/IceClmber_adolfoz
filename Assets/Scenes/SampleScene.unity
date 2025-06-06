@@ -2174,7 +2174,7 @@ MonoBehaviour:
   isBuilder: 0
   willbeBuilder: 0
   spawnPoint: {fileID: 521999929}
-  health: 3
+  health: 30
   spawner: {fileID: 754919133}
 --- !u!4 &948224816 stripped
 Transform:
@@ -2505,7 +2505,7 @@ GameObject:
   - component: {fileID: 1186779560}
   m_Layer: 7
   m_Name: grounded Attack box
-  m_TagString: Untagged
+  m_TagString: Damage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

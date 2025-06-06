@@ -6,6 +6,7 @@ TagManager:
   tags:
   - breakable
   - Bouncer
+  - Damage
   layers:
   - Default
   - TransparentFX

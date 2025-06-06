@@ -35,13 +35,16 @@ public class EnemySpawner : MonoBehaviour
     public void OnEnemyDeath()
     {
         // Destroy the current enemy
-        if (currentEnemy)
-        {
-            Destroy(currentEnemy);
-            currentEnemy = null; // Clear the current enemy reference
-        }
-        // Optionally, you can call SpawnEnemy here to respawn immediately after death
+        //if (currentEnemy.activeSelf == false)
+        //{
+        //    //Destroy(currentEnemy);
+        //    currentEnemy = null; // Clear the current enemy reference
+        //    SpawnEnemy();
+        //}
         SpawnEnemy();
+
+        // Optionally, you can call SpawnEnemy here to respawn immediately after death
+        //SpawnEnemy();
     }
 
 }

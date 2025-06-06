@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        health = 100;
     }
 
     private void FixedUpdate()
@@ -73,11 +74,13 @@ public class Enemy : MonoBehaviour
                 if (health <= 0)
                 {
                     // Call the OnEnemyDeath function
-                    GetComponent<EnemySpawner>().OnEnemyDeath();
-                    Destroy(gameObject);
+                   
+                   collision.gameObject.SetActive(false);
+                   spawner.GetComponent<EnemySpawner>().OnEnemyDeath();
+                   //Destroy(gameObject);
                 }
             }
-            collision.gameObject.SetActive(false);
+            
             // Nuevo: respawnear enemigo en el punto de spawn si existe
             if (spawnPoint != null)
             {
